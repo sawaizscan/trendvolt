@@ -1,7 +1,16 @@
 (function() {
   'use strict';
 
-  const API_BASE = '/api';
+  var SITE_BASE = (function() {
+    var p = location.pathname;
+    var m = p.match(/^\/([^/]+)\//);
+    if (m && m[1] !== 'article' && m[1] !== 'category' && m[1] !== 'search' && m[1] !== 'admin') return '/' + m[1] + '/';
+    return '/';
+  })();
+
+  function url(path) { return SITE_BASE.replace(/\/$/, '') + path; }
+
+  const API_BASE = url('/api');
   const STATE = {
     articles: { page: 0, loading: false, hasMore: true },
     trends: { all: [], filtered: [] },
@@ -384,7 +393,9 @@
   }
 
   async function initArticlePage() {
-    const slug = window.location.pathname.replace('/article/', '');
+    var route = sessionStorage.getItem('tv_route') || getRoute();
+    var slug = route.replace('/article/', '').split('?')[0].split('#')[0];
+    if (!slug || slug === 'ai-agents-explained' || slug.includes('article.html')) slug = 'ai-agents-explained';
     if (!slug) return;
 
     const data = await apiFetch(`/articles/${slug}`);
@@ -491,7 +502,9 @@
   }
 
   async function initCategoryPage() {
-    const slug = window.location.pathname.replace('/category/', '');
+    var route = sessionStorage.getItem('tv_route') || getRoute();
+    var slug = route.replace('/category/', '').split('?')[0].split('#')[0];
+    if (!slug || slug.includes('category.html')) slug = 'artificial-intelligence';
     if (!slug) return;
 
     const data = await apiFetch(`/categories/${slug}`);
@@ -538,8 +551,12 @@
     const empty = document.getElementById('search-empty');
     if (!input) return;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const queryParam = urlParams.get('q');
+    var stored = sessionStorage.getItem('tv_route');
+    var qs = '';
+    if (stored) { qs = stored.split('?')[1] || ''; sessionStorage.removeItem('tv_route'); }
+    else { qs = window.location.search.replace('?', ''); }
+    var urlParams = new URLSearchParams(qs);
+    var queryParam = urlParams.get('q');
     if (queryParam) {
       input.value = queryParam;
       performSearch(queryParam);
@@ -878,15 +895,6 @@
     loadMoreBtn.addEventListener('click', () => loadArticles(false));
     initInfiniteScroll();
   }
-
-  var SITE_BASE = (function() {
-    var p = location.pathname;
-    var m = p.match(/^\/([^/]+)\//);
-    if (m && m[1] !== 'article' && m[1] !== 'category' && m[1] !== 'search' && m[1] !== 'admin') return '/' + m[1] + '/';
-    return '/';
-  })();
-
-  function url(path) { return SITE_BASE.replace(/\/$/, '') + path; }
 
   function fixLinks(root) {
     (root || document).querySelectorAll('a[href^="/"]').forEach(function(a) {

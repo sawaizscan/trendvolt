@@ -6,30 +6,24 @@
   <title>TrendVolt</title>
   <script>
     (function() {
-      var path = location.pathname;
+      var path = location.pathname + location.search;
       var match = path.match(/\/trendvolt\/(.*)/);
       var base = match ? '/trendvolt/' : '/';
-      var route = match ? match[1] : path.replace(/^\//, '');
+      var rest = match ? match[1] : path.replace(/^\//, '');
 
-      if (route.startsWith('article/') || route.startsWith('category/') || route.startsWith('search') || route.startsWith('admin')) {
-        var parts = route.split('/');
-        var type = parts[0];
-        var slug = parts.slice(1).join('/');
-
-        if (type === 'article' && slug) {
-          sessionStorage.setItem('tv_route', '/article/' + slug);
-          location.href = base + 'article.html';
-        } else if (type === 'category' && slug) {
-          sessionStorage.setItem('tv_route', '/category/' + slug);
-          location.href = base + 'category.html';
-        } else if (type === 'search') {
-          sessionStorage.setItem('tv_route', '/search' + (slug ? '?q=' + slug : ''));
-          location.href = base + 'search.html';
-        } else if (type === 'admin') {
-          location.href = base + 'admin.html';
-        } else {
-          location.href = base;
-        }
+      if (rest.startsWith('article/')) {
+        var slug = rest.replace('article/', '');
+        sessionStorage.setItem('tv_route', '/article/' + slug);
+        location.href = base + 'article.html';
+      } else if (rest.startsWith('category/')) {
+        var cat = rest.replace('category/', '');
+        sessionStorage.setItem('tv_route', '/category/' + cat);
+        location.href = base + 'category.html';
+      } else if (rest.startsWith('search')) {
+        sessionStorage.setItem('tv_route', '/' + rest);
+        location.href = base + 'search.html';
+      } else if (rest.startsWith('admin')) {
+        location.href = base + 'admin.html';
       } else {
         location.href = base;
       }
