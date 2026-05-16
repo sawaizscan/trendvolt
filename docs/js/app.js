@@ -879,6 +879,24 @@
     initInfiniteScroll();
   }
 
+  var SITE_BASE = (function() {
+    var p = location.pathname;
+    var m = p.match(/^\/([^/]+)\//);
+    if (m && m[1] !== 'article' && m[1] !== 'category' && m[1] !== 'search' && m[1] !== 'admin') return '/' + m[1] + '/';
+    return '/';
+  })();
+
+  function url(path) { return SITE_BASE.replace(/\/$/, '') + path; }
+
+  function fixLinks(root) {
+    (root || document).querySelectorAll('a[href^="/"]').forEach(function(a) {
+      var h = a.getAttribute('href');
+      if (h && h.startsWith('/') && !h.startsWith('//') && !h.startsWith('/api/') && !h.startsWith('/trendvolt/')) {
+        a.setAttribute('href', SITE_BASE.replace(/\/$/, '') + h);
+      }
+    });
+  }
+
   function getRoute() {
     var stored = sessionStorage.getItem('tv_route');
     if (stored) {
@@ -886,30 +904,46 @@
       return stored;
     }
     var p = window.location.pathname;
-    var m = p.match(/\/[^/]+\/(article|category|search|admin)(\/.*)?$/);
+    var base = '';
+    var subdir = p.match(/^\/([^/]+)\//);
+    if (subdir && subdir[1] !== 'article' && subdir[1] !== 'category' && subdir[1] !== 'search' && subdir[1] !== 'admin') {
+      base = '/' + subdir[1];
+      p = p.replace(base, '') || '/';
+    }
+    var m = p.match(/\/(article|category|search|admin)(\/.*)?$/);
     if (m) {
       var type = m[1];
       var rest = m[2] || '';
       if (type === 'article' && rest) return '/article' + rest;
       if (type === 'category' && rest) return '/category' + rest;
       if (type === 'search') return '/search' + rest;
-      if (type === 'admin') return '/admin';
+      if (type === 'admin') return '/admin' + rest;
     }
     return p + (window.location.search || '');
   }
 
   var route = getRoute();
-  if (route === '/' || route === '' || route.includes('index.html')) {
-    document.addEventListener('DOMContentLoaded', initHomePage);
+  var pageInit;
+  if (route === '/' || route === '' || route.endsWith('index.html')) {
+    pageInit = initHomePage;
   } else if (route.startsWith('/article/')) {
-    document.addEventListener('DOMContentLoaded', initArticlePage);
+    pageInit = initArticlePage;
   } else if (route.startsWith('/category/')) {
-    document.addEventListener('DOMContentLoaded', initCategoryPage);
+    pageInit = initCategoryPage;
   } else if (route.startsWith('/search')) {
-    document.addEventListener('DOMContentLoaded', initSearchPage);
+    pageInit = initSearchPage;
   } else if (route.startsWith('/admin')) {
-    document.addEventListener('DOMContentLoaded', initAdminPage);
+    pageInit = initAdminPage;
+  } else {
+    pageInit = initHomePage;
   }
+  document.addEventListener('DOMContentLoaded', function() {
+    pageInit();
+    var observer = new MutationObserver(function() { fixLinks(); });
+    observer.observe(document.body, { childList: true, subtree: true });
+    setTimeout(fixLinks, 300);
+    setTimeout(fixLinks, 1000);
+  });
 
   window.TV = { showToast, apiFetch, formatDate };
 })();
