@@ -11,11 +11,41 @@
   function url(path) { return SITE_BASE.replace(/\/$/, '') + path; }
 
   const API_BASE = url('/api');
+  var STANDALONE = true;
+  var STANDALONE_CHECKED = false;
+
+  function checkStandalone() {
+    if (STANDALONE_CHECKED) return Promise.resolve(STANDALONE);
+    STANDALONE_CHECKED = true;
+    return fetch(API_BASE + '/articles?limit=1', { method: 'HEAD' }).then(function(r) {
+      STANDALONE = !r.ok;
+      return STANDALONE;
+    }).catch(function() {
+      STANDALONE = true;
+      return true;
+    });
+  }
+
   const STATE = {
     articles: { page: 0, loading: false, hasMore: true },
     trends: { all: [], filtered: [] },
-    standalone: false,
+    standalone: true,
   };
+
+  function img(name, w, h) {
+    var s = (name || '').toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20) || 'trendvolt';
+    return 'https://picsum.photos/seed/' + s + '/' + (w || 800) + '/' + (h || 400);
+  }
+
+  function catGradient(cat) {
+    var m = { 'Artificial Intelligence': 'cat-ai', 'Technology': 'cat-tech', 'Science': 'cat-science', 'Business': 'cat-business', 'Crypto': 'cat-crypto', 'Gaming': 'cat-gaming', 'Social Media': 'cat-social' };
+    return m[cat] || 'cat-default';
+  }
+
+  function catEmoji(cat) {
+    var m = { 'Artificial Intelligence': '🧠', 'Technology': '💻', 'Science': '🔬', 'Business': '💼', 'Crypto': '₿', 'Gaming': '🎮', 'Social Media': '📱', 'Tech Reviews': '⭐' };
+    return m[cat] || '📰';
+  }
 
   const MOCK = {
     categories: [
@@ -40,14 +70,14 @@
       { keyword: 'Tech layoffs 2024', score: 90, source: 'reddit', volume_trend: '10K+ discussions', region: 'US', article_count: 0 },
     ],
     articles: [
-      { id: 1, title: 'AI Agents Explained: How Autonomous AI Systems Are Transforming Technology in 2024', slug: 'ai-agents-explained', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'AI agents represent a revolutionary leap forward in artificial intelligence technology.', reading_time: 8, view_count: 1247, published_at: new Date(Date.now() - 3600000).toISOString(), trend_score: 95, featured_image: null },
-      { id: 2, title: 'Quantum Computing Breakthrough 2024: The Race to Quantum Supremacy Heats Up', slug: 'quantum-computing-breakthrough-2024', category_name: 'Science', category_slug: 'science', excerpt: 'Quantum computing has reached a pivotal moment in 2024 with multiple breakthroughs.', reading_time: 6, view_count: 892, published_at: new Date(Date.now() - 7200000).toISOString(), trend_score: 88, featured_image: null },
-      { id: 3, title: 'Best AI Coding Tools in 2024: The Ultimate Guide to AI-Powered Development', slug: 'best-ai-coding-tools-2024', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'AI-powered coding tools have transformed software development in 2024.', reading_time: 10, view_count: 2156, published_at: new Date(Date.now() - 10800000).toISOString(), trend_score: 92, featured_image: null },
-      { id: 4, title: 'Why Is AI Video Generation Trending? Everything You Need to Know', slug: 'ai-video-generation-trending', category_name: 'Technology', category_slug: 'technology', excerpt: 'AI video generation has exploded across social media and tech news.', reading_time: 5, view_count: 3451, published_at: new Date(Date.now() - 14400000).toISOString(), trend_score: 94, featured_image: null },
-      { id: 5, title: 'AI Startup Funding 2024: Record Investments Reshaping the Industry', slug: 'ai-startup-funding-2024', category_name: 'Business', category_slug: 'business', excerpt: 'AI startups are seeing unprecedented funding rounds in 2024.', reading_time: 7, view_count: 678, published_at: new Date(Date.now() - 18000000).toISOString(), trend_score: 93, featured_image: null },
-      { id: 6, title: 'Bitcoin Price Prediction 2024: What Experts Are Saying', slug: 'bitcoin-price-prediction-2024', category_name: 'Crypto', category_slug: 'crypto', excerpt: 'Cryptocurrency markets are showing renewed momentum.', reading_time: 6, view_count: 4567, published_at: new Date(Date.now() - 21600000).toISOString(), trend_score: 88, featured_image: null },
-      { id: 7, title: 'OpenAI GPT-5 Rumors: What We Know So Far', slug: 'openai-gpt-5-rumors', category_name: 'Technology', category_slug: 'technology', excerpt: 'Rumors about OpenAI GPT-5 are circulating across social media.', reading_time: 4, view_count: 7234, published_at: new Date(Date.now() - 25200000).toISOString(), trend_score: 91, featured_image: null },
-      { id: 8, title: 'Neuralink Update: Latest Brain-Computer Interface Breakthroughs', slug: 'neuralink-update-2024', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'Neuralink has announced new milestones in brain-computer interface technology.', reading_time: 5, view_count: 1890, published_at: new Date(Date.now() - 28800000).toISOString(), trend_score: 85, featured_image: null },
+      { id: 1, title: 'AI Agents Explained: How Autonomous AI Systems Are Transforming Technology in 2024', slug: 'ai-agents-explained', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'AI agents represent a revolutionary leap forward in artificial intelligence technology.', reading_time: 8, view_count: 1247, published_at: new Date(Date.now() - 3600000).toISOString(), trend_score: 95, featured_image: img('ai-agents', 800, 400) },
+      { id: 2, title: 'Quantum Computing Breakthrough 2024: The Race to Quantum Supremacy Heats Up', slug: 'quantum-computing-breakthrough-2024', category_name: 'Science', category_slug: 'science', excerpt: 'Quantum computing has reached a pivotal moment in 2024 with multiple breakthroughs.', reading_time: 6, view_count: 892, published_at: new Date(Date.now() - 7200000).toISOString(), trend_score: 88, featured_image: img('quantum', 800, 400) },
+      { id: 3, title: 'Best AI Coding Tools in 2024: The Ultimate Guide to AI-Powered Development', slug: 'best-ai-coding-tools-2024', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'AI-powered coding tools have transformed software development in 2024.', reading_time: 10, view_count: 2156, published_at: new Date(Date.now() - 10800000).toISOString(), trend_score: 92, featured_image: img('coding-tools', 800, 400) },
+      { id: 4, title: 'Why Is AI Video Generation Trending? Everything You Need to Know', slug: 'ai-video-generation-trending', category_name: 'Technology', category_slug: 'technology', excerpt: 'AI video generation has exploded across social media and tech news.', reading_time: 5, view_count: 3451, published_at: new Date(Date.now() - 14400000).toISOString(), trend_score: 94, featured_image: img('ai-video', 800, 400) },
+      { id: 5, title: 'AI Startup Funding 2024: Record Investments Reshaping the Industry', slug: 'ai-startup-funding-2024', category_name: 'Business', category_slug: 'business', excerpt: 'AI startups are seeing unprecedented funding rounds in 2024.', reading_time: 7, view_count: 678, published_at: new Date(Date.now() - 18000000).toISOString(), trend_score: 93, featured_image: img('startup-funding', 800, 400) },
+      { id: 6, title: 'Bitcoin Price Prediction 2024: What Experts Are Saying', slug: 'bitcoin-price-prediction-2024', category_name: 'Crypto', category_slug: 'crypto', excerpt: 'Cryptocurrency markets are showing renewed momentum.', reading_time: 6, view_count: 4567, published_at: new Date(Date.now() - 21600000).toISOString(), trend_score: 88, featured_image: img('bitcoin', 800, 400) },
+      { id: 7, title: 'OpenAI GPT-5 Rumors: What We Know So Far', slug: 'openai-gpt-5-rumors', category_name: 'Technology', category_slug: 'technology', excerpt: 'Rumors about OpenAI GPT-5 are circulating across social media.', reading_time: 4, view_count: 7234, published_at: new Date(Date.now() - 25200000).toISOString(), trend_score: 91, featured_image: img('gpt5', 800, 400) },
+      { id: 8, title: 'Neuralink Update: Latest Brain-Computer Interface Breakthroughs', slug: 'neuralink-update-2024', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'Neuralink has announced new milestones in brain-computer interface technology.', reading_time: 5, view_count: 1890, published_at: new Date(Date.now() - 28800000).toISOString(), trend_score: 85, featured_image: img('neuralink', 800, 400) },
     ],
     articleDetails: {
       'ai-agents-explained': {
@@ -153,22 +183,22 @@
   }
 
   async function apiFetch(url, options) {
+    if (STANDALONE) {
+      var m = mockResponse(url, options);
+      if (m) return m;
+    }
     try {
-      const res = await fetch(API_BASE + url, {
+      var res = await fetch(API_BASE + url, {
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         ...options
       });
       if (!res.ok) throw new Error('API unavailable');
-      const data = await res.json();
-      STATE.standalone = false;
+      var data = await res.json();
+      STANDALONE = false;
       return data;
     } catch (err) {
-      const mock = mockResponse(url, options);
-      if (mock) {
-        STATE.standalone = true;
-        return mock;
-      }
-      console.error('API Error:', err);
+      var m2 = mockResponse(url, options);
+      if (m2) { STANDALONE = true; return m2; }
       return null;
     }
   }
@@ -290,28 +320,13 @@
       loadMoreBtn.classList.toggle('hidden', !STATE.articles.hasMore);
     }
 
-    data.articles.forEach(article => {
-      const card = document.createElement('a');
-      card.href = `/article/${article.slug}`;
+    data.articles.forEach(function(article) {
+      var card = document.createElement('a');
+      card.href = '/article/' + article.slug;
       card.className = 'article-card group';
-      card.innerHTML = `
-        <div class="aspect-[16/9] bg-gradient-to-br from-trend-400/20 to-purple-500/20 overflow-hidden">
-          <div class="article-image w-full h-full flex items-center justify-center text-4xl opacity-30 group-hover:opacity-50 transition-opacity">
-            <svg class="w-12 h-12 text-trend-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-          </div>
-        </div>
-        <div class="p-5">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-xs font-medium text-trend-500 bg-trend-500/10 px-2 py-0.5 rounded">${article.category_name || 'Trending'}</span>
-            <span class="text-xs text-gray-400">${article.reading_time || 5} min read</span>
-          </div>
-          <h3 class="font-semibold text-base leading-snug mb-2 group-hover:text-trend-500 transition-colors line-clamp-2">${article.title}</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">${article.excerpt || ''}</p>
-          <div class="flex items-center justify-between mt-4 text-xs text-gray-400">
-            <span>${formatDate(article.published_at)}</span>
-            <span>${article.view_count || 0} views</span>
-          </div>
-        </div>`;
+      var imgUrl = article.featured_image || img(article.slug, 800, 400);
+      var emoji = catEmoji(article.category_name);
+      card.innerHTML = '<div class="article-img-bg" style="background-image:url(' + imgUrl + ');height:200px"><div class="overlay"></div><div style="position:absolute;bottom:8px;left:12px;font-size:1.5rem">' + emoji + '</div></div><div class="p-4"><div class="flex items-center gap-2 mb-2"><span class="text-xs font-medium" style="color:#3b82f6;background:rgba(59,130,246,.1);padding:0 8px;border-radius:4px;line-height:22px">' + (article.category_name || 'Trending') + '</span><span class="text-xs" style="color:#9ca3af">' + (article.reading_time || 5) + ' min read</span></div><h3 class="font-semibold" style="font-size:.938rem;line-height:1.35;margin-bottom:8px">' + article.title + '</h3><p class="text-sm" style="color:#6b7280;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + (article.excerpt || '') + '</p><div class="flex items-center justify-between mt-3 text-xs" style="color:#9ca3af"><span>' + formatDate(article.published_at) + '</span><span>' + (article.view_count || 0) + ' views</span></div></div>';
       grid.appendChild(card);
     });
 
