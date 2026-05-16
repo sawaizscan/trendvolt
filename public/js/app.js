@@ -5,6 +5,68 @@
   const STATE = {
     articles: { page: 0, loading: false, hasMore: true },
     trends: { all: [], filtered: [] },
+    standalone: false,
+  };
+
+  const MOCK = {
+    categories: [
+      { id: 1, name: 'Artificial Intelligence', slug: 'artificial-intelligence', description: 'AI news, trends, and analysis', article_count: 3 },
+      { id: 2, name: 'Technology', slug: 'technology', description: 'General technology', article_count: 2 },
+      { id: 3, name: 'Science', slug: 'science', description: 'Scientific breakthroughs', article_count: 1 },
+      { id: 4, name: 'Business', slug: 'business', description: 'Business and startups', article_count: 1 },
+      { id: 5, name: 'Crypto', slug: 'crypto', description: 'Cryptocurrency and blockchain', article_count: 1 },
+    ],
+    trends: [
+      { keyword: 'AI agents explained', score: 95, source: 'google_trends', volume_trend: '1M+', region: 'Global', article_count: 1 },
+      { keyword: 'Quantum computing breakthrough 2024', score: 88, source: 'google_trends', volume_trend: '500K+', region: 'US', article_count: 1 },
+      { keyword: 'Best AI coding tools', score: 92, source: 'google_trends', volume_trend: '750K+', region: 'Global', article_count: 1 },
+      { keyword: 'Neuralink update', score: 85, source: 'reddit', volume_trend: '600K+', region: 'US', article_count: 0 },
+      { keyword: 'OpenAI GPT-5 rumors', score: 91, source: 'reddit', volume_trend: '2K+ discussions', region: 'Global', article_count: 0 },
+      { keyword: 'AI video generation', score: 94, source: 'twitter', volume_trend: '100K+ posts', region: 'Global', article_count: 0 },
+      { keyword: 'Bitcoin price prediction', score: 88, source: 'crypto', volume_trend: '1M+ searches', region: 'Global', article_count: 0 },
+      { keyword: 'Apple Vision Pro apps', score: 80, source: 'techcrunch', volume_trend: '400K+', region: 'Global', article_count: 0 },
+      { keyword: 'AI startup funding 2024', score: 93, source: 'techcrunch', volume_trend: 'Featured', region: 'Global', article_count: 0 },
+      { keyword: 'SpaceX Stars launch', score: 84, source: 'techcrunch', volume_trend: 'Featured', region: 'Global', article_count: 0 },
+      { keyword: 'Rust vs Go 2024', score: 86, source: 'hacker_news', volume_trend: '500+ points', region: 'Global', article_count: 0 },
+      { keyword: 'Tech layoffs 2024', score: 90, source: 'reddit', volume_trend: '10K+ discussions', region: 'US', article_count: 0 },
+    ],
+    articles: [
+      { id: 1, title: 'AI Agents Explained: How Autonomous AI Systems Are Transforming Technology in 2024', slug: 'ai-agents-explained', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'AI agents represent a revolutionary leap forward in artificial intelligence technology.', reading_time: 8, view_count: 1247, published_at: new Date(Date.now() - 3600000).toISOString(), trend_score: 95, featured_image: null },
+      { id: 2, title: 'Quantum Computing Breakthrough 2024: The Race to Quantum Supremacy Heats Up', slug: 'quantum-computing-breakthrough-2024', category_name: 'Science', category_slug: 'science', excerpt: 'Quantum computing has reached a pivotal moment in 2024 with multiple breakthroughs.', reading_time: 6, view_count: 892, published_at: new Date(Date.now() - 7200000).toISOString(), trend_score: 88, featured_image: null },
+      { id: 3, title: 'Best AI Coding Tools in 2024: The Ultimate Guide to AI-Powered Development', slug: 'best-ai-coding-tools-2024', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'AI-powered coding tools have transformed software development in 2024.', reading_time: 10, view_count: 2156, published_at: new Date(Date.now() - 10800000).toISOString(), trend_score: 92, featured_image: null },
+      { id: 4, title: 'Why Is AI Video Generation Trending? Everything You Need to Know', slug: 'ai-video-generation-trending', category_name: 'Technology', category_slug: 'technology', excerpt: 'AI video generation has exploded across social media and tech news.', reading_time: 5, view_count: 3451, published_at: new Date(Date.now() - 14400000).toISOString(), trend_score: 94, featured_image: null },
+      { id: 5, title: 'AI Startup Funding 2024: Record Investments Reshaping the Industry', slug: 'ai-startup-funding-2024', category_name: 'Business', category_slug: 'business', excerpt: 'AI startups are seeing unprecedented funding rounds in 2024.', reading_time: 7, view_count: 678, published_at: new Date(Date.now() - 18000000).toISOString(), trend_score: 93, featured_image: null },
+      { id: 6, title: 'Bitcoin Price Prediction 2024: What Experts Are Saying', slug: 'bitcoin-price-prediction-2024', category_name: 'Crypto', category_slug: 'crypto', excerpt: 'Cryptocurrency markets are showing renewed momentum.', reading_time: 6, view_count: 4567, published_at: new Date(Date.now() - 21600000).toISOString(), trend_score: 88, featured_image: null },
+      { id: 7, title: 'OpenAI GPT-5 Rumors: What We Know So Far', slug: 'openai-gpt-5-rumors', category_name: 'Technology', category_slug: 'technology', excerpt: 'Rumors about OpenAI GPT-5 are circulating across social media.', reading_time: 4, view_count: 7234, published_at: new Date(Date.now() - 25200000).toISOString(), trend_score: 91, featured_image: null },
+      { id: 8, title: 'Neuralink Update: Latest Brain-Computer Interface Breakthroughs', slug: 'neuralink-update-2024', category_name: 'Artificial Intelligence', category_slug: 'artificial-intelligence', excerpt: 'Neuralink has announced new milestones in brain-computer interface technology.', reading_time: 5, view_count: 1890, published_at: new Date(Date.now() - 28800000).toISOString(), trend_score: 85, featured_image: null },
+    ],
+    articleDetails: {
+      'ai-agents-explained': {
+        title: 'AI Agents Explained: How Autonomous AI Systems Are Transforming Technology in 2024',
+        slug: 'ai-agents-explained',
+        content: '<h2 id="what-are-ai-agents">What Are AI Agents?</h2><p>AI agents represent a revolutionary leap forward in artificial intelligence technology. Unlike traditional AI systems that simply respond to commands, AI agents are autonomous software programs capable of perceiving their environment, making decisions, and taking actions to achieve specific goals without constant human intervention.</p><p>Think of AI agents as your digital workforce — they can plan, execute tasks, learn from outcomes, and adapt their strategies accordingly. From scheduling meetings to writing code, AI agents are being deployed across industries to automate complex workflows.</p><h2 id="why-they-matter">Why AI Agents Are Trending Now</h2><p>The explosion of interest in AI agents can be traced to several key developments in 2024. Major tech companies including OpenAI, Google, Microsoft, and Anthropic have released frameworks that make it easier to build and deploy AI agents. Open-source projects like AutoGPT, BabyAGI, and CrewAI have democratized access.</p><p>YouTube tutorials on building AI agents have accumulated millions of views, indicating a massive wave of interest from developers and businesses alike.</p><h2 id="how-they-work">How AI Agents Work</h2><p>At their core, AI agents operate on a perception-action loop. They <strong>perceive</strong> their environment through APIs and user input, <strong>reason</strong> using large language models, <strong>act</strong> by calling tools and executing code, and <strong>learn</strong> by incorporating feedback.</p><h2 id="key-players">Key Players</h2><p>The AI agent ecosystem includes OpenAI GPT-4 with function calling, Microsoft Copilot, Cognition AI Devin, and open-source alternatives from the community.</p><h2 id="applications">Real-World Applications</h2><p>AI agents are used for software development, customer support, data analysis, content creation, and business automation. They are becoming an essential tool across industries.</p><h2 id="faq">Frequently Asked Questions</h2><div class="faq-item"><h3>What exactly is an AI agent?</h3><p>An AI agent is an autonomous software program that can perceive its environment, make decisions, and take actions to achieve goals without constant human guidance.</p></div><div class="faq-item"><h3>How are AI agents different from chatbots?</h3><p>While chatbots respond to queries, AI agents take independent action. They can plan multi-step tasks, use tools, execute code, and learn from outcomes.</p></div><div class="faq-item"><h3>Are AI agents safe?</h3><p>Safety depends on proper implementation. Leading frameworks include guardrails, human oversight mechanisms, and constraint systems.</p></div><div class="faq-item"><h3>Can I build my own AI agent?</h3><p>Yes! Open-source frameworks like AutoGPT, CrewAI, and LangChain make it accessible to build custom AI agents with basic programming knowledge.</p></div>',
+        category_name: 'Artificial Intelligence',
+        category_slug: 'artificial-intelligence',
+        reading_time: 8,
+        view_count: 1247,
+        published_at: new Date(Date.now() - 3600000).toISOString(),
+        table_of_contents: [
+          { text: 'What Are AI Agents?', id: 'what-are-ai-agents' },
+          { text: 'Why AI Agents Are Trending Now', id: 'why-they-matter' },
+          { text: 'How AI Agents Work', id: 'how-they-work' },
+          { text: 'Key Players', id: 'key-players' },
+          { text: 'Real-World Applications', id: 'applications' },
+          { text: 'Frequently Asked Questions', id: 'faq' },
+        ],
+        faqs: [
+          { question: 'What exactly is an AI agent?', answer: 'An AI agent is an autonomous software program that can perceive its environment, make decisions, and take actions to achieve goals without constant human guidance.' },
+          { question: 'How are AI agents different from chatbots?', answer: 'While chatbots respond to queries, AI agents take independent action. They can plan multi-step tasks, use tools, execute code, and learn from outcomes.' },
+          { question: 'Are AI agents safe?', answer: 'Safety depends on proper implementation. Leading frameworks include guardrails, human oversight mechanisms, and constraint systems.' },
+          { question: 'Can I build my own AI agent?', answer: 'Yes! Open-source frameworks like AutoGPT, CrewAI, and LangChain make it accessible to build custom AI agents with basic programming knowledge.' },
+        ],
+        tags: 'AI, artificial intelligence, agents, automation, GPT, machine learning',
+      },
+    },
   };
 
   function showToast(message, type) {
@@ -25,20 +87,79 @@
     }, 3000);
   }
 
+  function mockResponse(url, options) {
+    if (url.startsWith('/trends?limit=')) {
+      const limit = parseInt(url.match(/limit=(\d+)/)?.[1]) || 20;
+      return { trends: MOCK.trends.slice(0, limit), total: Math.min(MOCK.trends.length, limit) };
+    }
+    if (url === '/trends/sources') {
+      const groups = {};
+      for (const t of MOCK.trends) {
+        if (!groups[t.source]) groups[t.source] = [];
+        groups[t.source].push(t);
+      }
+      return { sources: groups };
+    }
+    if (url.startsWith('/articles?limit=')) {
+      const limit = parseInt(url.match(/limit=(\d+)/)?.[1]) || 50;
+      const offset = parseInt(url.match(/offset=(\d+)/)?.[1]) || 0;
+      return { articles: MOCK.articles.slice(offset, offset + limit), total: MOCK.articles.length, offset, limit };
+    }
+    if (url.startsWith('/articles/')) {
+      const slug = url.replace('/articles/', '');
+      const article = MOCK.articleDetails[slug];
+      if (article) {
+        const related = MOCK.articles.filter(a => a.slug !== slug).slice(0, 4);
+        return { article, related, schemas: {} };
+      }
+    }
+    if (url.startsWith('/search?q=')) {
+      const query = decodeURIComponent(url.match(/q=([^&]*)/)?.[1] || '').toLowerCase();
+      const articles = MOCK.articles.filter(a =>
+        a.title.toLowerCase().includes(query) || (a.excerpt || '').toLowerCase().includes(query)
+      );
+      return { articles, total: articles.length, query };
+    }
+    if (url === '/categories') return { categories: MOCK.categories };
+    if (url.startsWith('/categories/')) {
+      const slug = url.replace('/categories/', '');
+      const cat = MOCK.categories.find(c => c.slug === slug);
+      if (cat) {
+        const articles = MOCK.articles.filter(a => a.category_slug === slug);
+        return { category: cat, articles };
+      }
+    }
+    if (url === '/analytics/summary') {
+      return {
+        totalArticles: MOCK.articles.length,
+        totalViews: MOCK.articles.reduce((s, a) => s + (a.view_count || 0), 0),
+        totalTrends: MOCK.trends.length,
+        totalSubs: 142,
+        recentViews: Array.from({length: 7}, (_, i) => ({ date: new Date(Date.now() - (6-i)*86400000).toISOString().slice(0,10), views: Math.floor(Math.random() * 200) + 50 })),
+        topArticles: MOCK.articles.sort((a, b) => (b.view_count||0) - (a.view_count||0)).slice(0, 5).map(a => ({ title: a.title, slug: a.slug, view_count: a.view_count })),
+      };
+    }
+    if (url === '/admin/queue') return { queue: [] };
+    return null;
+  }
+
   async function apiFetch(url, options) {
     try {
       const res = await fetch(API_BASE + url, {
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         ...options
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: res.statusText }));
-        throw new Error(err.error || 'API error');
-      }
-      return await res.json();
+      if (!res.ok) throw new Error('API unavailable');
+      const data = await res.json();
+      STATE.standalone = false;
+      return data;
     } catch (err) {
+      const mock = mockResponse(url, options);
+      if (mock) {
+        STATE.standalone = true;
+        return mock;
+      }
       console.error('API Error:', err);
-      showToast(err.message, 'error');
       return null;
     }
   }

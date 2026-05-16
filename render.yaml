@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: trendvolt
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SITE_URL
+        value: https://trendvolt.onrender.com
+      - key: PORT
+        value: 10000
+    healthCheckPath: /api/articles?limit=1
+    autoDeploy: true
+    plan: free
