@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrendVolt - Your Pulse on What's Trending</title>
+  <meta name="description" content="TrendVolt discovers and analyzes trending topics across the internet. Stay informed with AI-powered insights on what's trending right now.">
+  <meta name="keywords" content="trending, news, AI, technology, viral, internet trends, what's trending">
+  <link rel="canonical" href="/">
+  <meta property="og:title" content="TrendVolt - Your Pulse on What's Trending">
+  <meta property="og:description" content="Discover trending topics across AI, tech, crypto, science, and viral internet culture with AI-powered analysis.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TrendVolt - Your Pulse on What's Trending">
+  <meta name="twitter:description" content="Discover trending topics across AI, tech, crypto, science, and viral internet culture.">
+  <meta name="robots" content="index, follow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            trend: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            surface: { DEFAULT: '#0f172a', light: '#1e293b', lighter: '#334155', card: '#1e293b' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white dark:bg-surface text-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-200">
+  <div id="app">
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-surface/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="flex items-center space-x-2 group">
+            <div class="w-8 h-8 bg-gradient-to-br from-trend-400 to-trend-600 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-sm">T</span>
+            </div>
+            <span class="text-xl font-bold bg-gradient-to-r from-trend-400 to-trend-600 bg-clip-text text-transparent">TrendVolt</span>
+          </a>
+          <div class="hidden md:flex items-center space-x-1">
+            <a href="/" class="nav-link active px-3 py-2 rounded-lg text-sm font-medium transition-colors">Home</a>
+            <div class="relative group" id="categories-dropdown">
+              <button class="nav-link px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1" id="categories-btn">
+                Categories <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+              <div class="absolute top-full right-0 mt-1 w-56 bg-white dark:bg-surface-light rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50" id="categories-menu">
+                <div class="p-2 space-y-1" id="categories-list"></div>
+              </div>
+            </div>
+            <a href="/search" class="nav-link px-3 py-2 rounded-lg text-sm font-medium transition-colors">Search</a>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-lighter transition-colors" aria-label="Toggle theme">
+              <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+              <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+            <a href="/search" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-lighter transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="relative overflow-hidden bg-gradient-to-br from-trend-900 via-surface to-surface">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMzYjgyZjYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative">
+        <div class="text-center max-w-3xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-trend-500/10 border border-trend-500/20 text-trend-400 text-sm font-medium mb-6">
+            <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-trend-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-trend-500"></span></span>
+            Live Trend Detection
+          </div>
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
+            Your Pulse on
+            <span class="bg-gradient-to-r from-trend-300 via-trend-400 to-trend-600 bg-clip-text text-transparent">What's Trending</span>
+          </h1>
+          <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+            AI-powered discovery and analysis of trending topics across the internet. Stay ahead of the curve with real-time insights.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="#trending-now" class="px-8 py-3 bg-trend-500 hover:bg-trend-600 text-white rounded-xl font-medium transition-all shadow-lg shadow-trend-500/25">
+              Explore Trends
+            </a>
+            <a href="/search" class="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all border border-white/10">
+              Search Articles
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-surface to-transparent"></div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="trending-carousel">
+        <div class="trend-card loading-skeleton h-32 rounded-xl"></div>
+        <div class="trend-card loading-skeleton h-32 rounded-xl"></div>
+        <div class="trend-card loading-skeleton h-32 rounded-xl"></div>
+        <div class="trend-card loading-skeleton h-32 rounded-xl"></div>
+      </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" id="trending-now">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold">Trending Now</h2>
+          <p class="text-gray-500 dark:text-gray-400 mt-1">Most discussed topics across the web</p>
+        </div>
+        <div class="flex gap-2" id="source-filters">
+          <button class="source-filter active px-4 py-1.5 rounded-lg text-sm font-medium bg-trend-500 text-white" data-source="all">All</button>
+          <button class="source-filter px-4 py-1.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-surface-lighter text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" data-source="google_trends">Google</button>
+          <button class="source-filter px-4 py-1.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-surface-lighter text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" data-source="reddit">Reddit</button>
+          <button class="source-filter px-4 py-1.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-surface-lighter text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" data-source="twitter">X/Twitter</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="trends-grid">
+        <div class="loading-skeleton h-48 rounded-xl"></div>
+        <div class="loading-skeleton h-48 rounded-xl"></div>
+        <div class="loading-skeleton h-48 rounded-xl"></div>
+      </div>
+    </section>
+
+    <section class="bg-gray-50 dark:bg-surface-light/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-2xl md:text-3xl font-bold">Latest Articles</h2>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">AI-generated insights on trending topics</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articles-grid">
+          <div class="loading-skeleton h-96 rounded-xl"></div>
+          <div class="loading-skeleton h-96 rounded-xl"></div>
+          <div class="loading-skeleton h-96 rounded-xl"></div>
+        </div>
+        <div class="text-center mt-8" id="load-more-container">
+          <button id="load-more-btn" class="px-8 py-3 bg-gray-100 dark:bg-surface-lighter hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl font-medium transition-colors hidden">
+            Load More Articles
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-gradient-to-br from-trend-600 to-trend-800 relative overflow-hidden">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIvPjwvZz48L2c+PC9zdmc+')]"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
+        <div class="max-w-2xl mx-auto text-center">
+          <h2 class="text-3xl font-bold text-white mb-4">Stay Ahead of the Trends</h2>
+          <p class="text-trend-100 mb-8">Get the latest trending topics delivered to your inbox every day.</p>
+          <form id="newsletter-form" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input type="email" id="newsletter-email" placeholder="Enter your email" required
+              class="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-trend-200 focus:outline-none focus:ring-2 focus:ring-white/50">
+            <button type="submit" class="px-6 py-3 bg-white text-trend-700 rounded-xl font-semibold hover:bg-trend-50 transition-colors whitespace-nowrap">Subscribe</button>
+          </form>
+          <p id="newsletter-message" class="text-trend-200 text-sm mt-3"></p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-surface-dark border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div class="col-span-2 md:col-span-1">
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="w-8 h-8 bg-gradient-to-br from-trend-400 to-trend-600 rounded-lg flex items-center justify-center">
+                <span class="text-white font-bold text-sm">T</span>
+              </div>
+              <span class="text-lg font-bold text-white">TrendVolt</span>
+            </div>
+            <p class="text-gray-400 text-sm">AI-powered trending content platform. Discover what's trending across the internet.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-white mb-4">Trending</h4>
+            <ul class="space-y-2 text-sm text-gray-400" id="footer-trends">
+              <li class="loading-skeleton h-4 w-24 rounded"></li>
+              <li class="loading-skeleton h-4 w-20 rounded"></li>
+              <li class="loading-skeleton h-4 w-28 rounded"></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-white mb-4">Categories</h4>
+            <ul class="space-y-2 text-sm text-gray-400" id="footer-categories">
+              <li class="loading-skeleton h-4 w-20 rounded"></li>
+              <li class="loading-skeleton h-4 w-24 rounded"></li>
+              <li class="loading-skeleton h-4 w-16 rounded"></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-white mb-4">Legal</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="/ads.txt" class="hover:text-white transition-colors">Ad Choices</a></li>
+              <li><a href="/sitemap.xml" class="hover:text-white transition-colors">Sitemap</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-500">
+          <p>&copy; 2024 TrendVolt. All rights reserved. Powered by AI.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

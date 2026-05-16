@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - TrendVolt</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif']},colors:{trend:{50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a'},surface:{DEFAULT:'#0f172a',light:'#1e293b',lighter:'#334155',card:'#1e293b'}}}}}</script>
+</head>
+<body class="bg-gray-50 dark:bg-surface text-gray-900 dark:text-gray-100 font-sans antialiased">
+  <nav class="sticky top-0 z-50 bg-white/80 dark:bg-surface/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-4">
+          <a href="/" class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-gradient-to-br from-trend-400 to-trend-600 rounded-lg flex items-center justify-center"><span class="text-white font-bold text-sm">T</span></div>
+            <span class="text-xl font-bold">Admin</span>
+          </a>
+          <div class="hidden md:flex space-x-1 ml-8">
+            <button class="admin-tab active px-4 py-2 rounded-lg text-sm font-medium" data-tab="dashboard">Dashboard</button>
+            <button class="admin-tab px-4 py-2 rounded-lg text-sm font-medium" data-tab="trends">Trends</button>
+            <button class="admin-tab px-4 py-2 rounded-lg text-sm font-medium" data-tab="articles">Articles</button>
+            <button class="admin-tab px-4 py-2 rounded-lg text-sm font-medium" data-tab="queue">Queue</button>
+            <button class="admin-tab px-4 py-2 rounded-lg text-sm font-medium" data-tab="analytics">Analytics</button>
+          </div>
+        </div>
+        <a href="/" class="px-4 py-2 bg-gray-100 dark:bg-surface-lighter rounded-lg text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">View Site</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div id="tab-dashboard" class="tab-content active">
+      <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="stats-grid">
+        <div class="stat-card bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div class="text-gray-500 text-sm mb-1">Total Articles</div>
+          <div class="text-3xl font-bold stat-value" id="stat-articles">0</div>
+        </div>
+        <div class="stat-card bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div class="text-gray-500 text-sm mb-1">Total Views</div>
+          <div class="text-3xl font-bold stat-value" id="stat-views">0</div>
+        </div>
+        <div class="stat-card bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div class="text-gray-500 text-sm mb-1">Trends Detected</div>
+          <div class="text-3xl font-bold stat-value" id="stat-trends">0</div>
+        </div>
+        <div class="stat-card bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div class="text-gray-500 text-sm mb-1">Subscribers</div>
+          <div class="text-3xl font-bold stat-value" id="stat-subs">0</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <h2 class="font-semibold mb-4">Recent Views (7 Days)</h2>
+          <div id="views-chart" class="h-48 flex items-end gap-2"></div>
+        </div>
+        <div class="bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <h2 class="font-semibold mb-4">Top Articles</h2>
+          <div id="top-articles" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-trends" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Trend Scanner</h1>
+        <div class="flex gap-3">
+          <button id="scan-trends-btn" class="px-4 py-2 bg-trend-500 text-white rounded-lg hover:bg-trend-600 transition-colors text-sm font-medium">Scan Now</button>
+          <button id="generate-from-trend-btn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium">Generate from Top Trend</button>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-surface-light rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface">
+            <th class="text-left px-4 py-3 font-medium">Keyword</th>
+            <th class="text-left px-4 py-3 font-medium">Score</th>
+            <th class="text-left px-4 py-3 font-medium">Source</th>
+            <th class="text-left px-4 py-3 font-medium">Volume</th>
+            <th class="text-left px-4 py-3 font-medium">Region</th>
+            <th class="text-left px-4 py-3 font-medium">Articles</th>
+            <th class="text-left px-4 py-3 font-medium">Action</th>
+          </tr></thead>
+          <tbody id="trends-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tab-articles" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Articles</h1>
+        <div class="flex gap-3">
+          <button id="pending-articles-btn" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm font-medium">Show Pending</button>
+          <button id="refresh-articles-btn" class="px-4 py-2 bg-gray-200 dark:bg-surface-lighter rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors text-sm font-medium">Refresh</button>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-surface-light rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface">
+            <th class="text-left px-4 py-3 font-medium">Title</th>
+            <th class="text-left px-4 py-3 font-medium">Category</th>
+            <th class="text-left px-4 py-3 font-medium">Views</th>
+            <th class="text-left px-4 py-3 font-medium">Score</th>
+            <th class="text-left px-4 py-3 font-medium">Status</th>
+            <th class="text-left px-4 py-3 font-medium">Published</th>
+            <th class="text-left px-4 py-3 font-medium">Actions</th>
+          </tr></thead>
+          <tbody id="articles-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tab-queue" class="tab-content hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Content Queue</h1>
+        <div class="flex gap-3">
+          <input type="text" id="queue-keyword-input" placeholder="Add keyword to queue..." class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-surface border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-trend-500 text-sm">
+          <button id="add-to-queue-btn" class="px-4 py-2 bg-trend-500 text-white rounded-lg hover:bg-trend-600 transition-colors text-sm font-medium">Add to Queue</button>
+          <button id="process-queue-btn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium">Process Next</button>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-surface-light rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface">
+            <th class="text-left px-4 py-3 font-medium">Keyword</th>
+            <th class="text-left px-4 py-3 font-medium">Priority</th>
+            <th class="text-left px-4 py-3 font-medium">Status</th>
+            <th class="text-left px-4 py-3 font-medium">Score</th>
+            <th class="text-left px-4 py-3 font-medium">Source</th>
+            <th class="text-left px-4 py-3 font-medium">Created</th>
+          </tr></thead>
+          <tbody id="queue-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tab-analytics" class="tab-content hidden">
+      <h1 class="text-2xl font-bold mb-6">Analytics</h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div class="text-gray-500 text-sm mb-1">Avg Views/Article</div>
+          <div class="text-3xl font-bold" id="analytics-avg-views">0</div>
+        </div>
+        <div class="bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div class="text-gray-500 text-sm mb-1">Conversion Rate</div>
+          <div class="text-3xl font-bold" id="analytics-conversion">0%</div>
+        </div>
+        <div class="bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div class="text-gray-500 text-sm mb-1">Total Value</div>
+          <div class="text-3xl font-bold" id="analytics-value">$0</div>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-surface-light rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+        <h2 class="font-semibold mb-4">Data Export</h2>
+        <p class="text-gray-500 text-sm mb-4">Export your analytics data for external analysis.</p>
+        <button onclick="alert('Export functionality coming soon')" class="px-4 py-2 bg-gray-200 dark:bg-surface-lighter rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">Export CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-4 right-4 px-6 py-3 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-sm font-medium"></div>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
