@@ -1,13 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TrendVolt</title>
   <script>
-    sessionStorage.redirect = location.href;
+    (function() {
+      var path = location.pathname;
+      var match = path.match(/\/trendvolt\/(.*)/);
+      var base = match ? '/trendvolt/' : '/';
+      var route = match ? match[1] : path.replace(/^\//, '');
+
+      if (route.startsWith('article/') || route.startsWith('category/') || route.startsWith('search') || route.startsWith('admin')) {
+        var parts = route.split('/');
+        var type = parts[0];
+        var slug = parts.slice(1).join('/');
+
+        if (type === 'article' && slug) {
+          sessionStorage.setItem('tv_route', '/article/' + slug);
+          location.href = base + 'article.html';
+        } else if (type === 'category' && slug) {
+          sessionStorage.setItem('tv_route', '/category/' + slug);
+          location.href = base + 'category.html';
+        } else if (type === 'search') {
+          sessionStorage.setItem('tv_route', '/search' + (slug ? '?q=' + slug : ''));
+          location.href = base + 'search.html';
+        } else if (type === 'admin') {
+          location.href = base + 'admin.html';
+        } else {
+          location.href = base;
+        }
+      } else {
+        location.href = base;
+      }
+    })();
   </script>
-  <meta http-equiv="refresh" content="0;URL='/'">
 </head>
 <body></body>
 </html>

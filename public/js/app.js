@@ -879,16 +879,35 @@
     initInfiniteScroll();
   }
 
-  const path = window.location.pathname;
-  if (path === '/' || path === '') {
+  function getRoute() {
+    var stored = sessionStorage.getItem('tv_route');
+    if (stored) {
+      sessionStorage.removeItem('tv_route');
+      return stored;
+    }
+    var p = window.location.pathname;
+    var m = p.match(/\/[^/]+\/(article|category|search|admin)(\/.*)?$/);
+    if (m) {
+      var type = m[1];
+      var rest = m[2] || '';
+      if (type === 'article' && rest) return '/article' + rest;
+      if (type === 'category' && rest) return '/category' + rest;
+      if (type === 'search') return '/search' + rest;
+      if (type === 'admin') return '/admin';
+    }
+    return p + (window.location.search || '');
+  }
+
+  var route = getRoute();
+  if (route === '/' || route === '' || route.includes('index.html')) {
     document.addEventListener('DOMContentLoaded', initHomePage);
-  } else if (path.startsWith('/article/')) {
+  } else if (route.startsWith('/article/')) {
     document.addEventListener('DOMContentLoaded', initArticlePage);
-  } else if (path.startsWith('/category/')) {
+  } else if (route.startsWith('/category/')) {
     document.addEventListener('DOMContentLoaded', initCategoryPage);
-  } else if (path.startsWith('/search')) {
+  } else if (route.startsWith('/search')) {
     document.addEventListener('DOMContentLoaded', initSearchPage);
-  } else if (path.startsWith('/admin')) {
+  } else if (route.startsWith('/admin')) {
     document.addEventListener('DOMContentLoaded', initAdminPage);
   }
 
